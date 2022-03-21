@@ -39,10 +39,10 @@ public class SendKapizoHandler {
         log.info("event: " + event);
         final String originalMessageText = event.getMessage().getText();
         if ("おはよう".equals(originalMessageText)) {
-            return new TextMessage("カピ子(蔵)だよ！¥nおはよう");
+            return new TextMessage("カピ子(蔵)だよ！\\nおはよう");
         }
         if (Objects.equals(originalMessageText, "こんばんは")) {
-            return new TextMessage("カピ子(蔵)だよ！¥nこんばんは");
+            return new TextMessage("カピ子(蔵)だよ！\\nこんばんは");
         }
         return new TextMessage("また遊んでね！！");
     }
