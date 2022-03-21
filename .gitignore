@@ -4,13 +4,13 @@ build/
 out/
 
 # gradle
-# /.gradle/
+/.gradle/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
 # Package Files #
-# *.jar
+*.jar
 *.war
 *.ear
 
