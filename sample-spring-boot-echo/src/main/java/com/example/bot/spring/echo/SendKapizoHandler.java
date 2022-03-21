@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 
 @LineMessageHandler
@@ -38,8 +41,15 @@ public class SendKapizoHandler {
     public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
         log.info("event: " + event);
         final String originalMessageText = event.getMessage().getText();
+
+        final Instant timestamp = event.getTimestamp();
+        final Date date = Date.from(timestamp);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        final String dtStr = df.format(date);
+
         if ("おはよう".equals(originalMessageText)) {
-            return new TextMessage("カピ子(蔵)だよ！\nおはよう");
+            return new TextMessage("カピ子(蔵)だよ！\nおはよう\n" + dtStr);
         }
         if (Objects.equals(originalMessageText, "こんばんは")) {
             return new TextMessage("カピ子(蔵)だよ！\nこんばんは");
