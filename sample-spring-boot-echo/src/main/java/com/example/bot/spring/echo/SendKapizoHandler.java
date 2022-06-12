@@ -29,6 +29,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -104,11 +105,19 @@ public class SendKapizoHandler {
   //
   //    }
 
-  private Connection getConnection() {
-    String dbUrl = System.getenv("JDBC_DATABASE_URL");
-    log.info(dbUrl);
+  public static Connection getConnection() {
+    // jdbc:postgresql://<host>:<port>/<dbname>?user=<username>&password=<password>
+    URI dbUri;
     try {
-      return DriverManager.getConnection(dbUrl);
+      dbUri = new URI(System.getenv("DATABASE_URL"));
+    } catch (URISyntaxException e) {
+      throw new RuntimeException(e);
+    }
+    String username = dbUri.getUserInfo().split(":")[0];
+    String password = dbUri.getUserInfo().split(":")[1];
+    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+    try {
+      return DriverManager.getConnection(dbUrl, username, password);
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
