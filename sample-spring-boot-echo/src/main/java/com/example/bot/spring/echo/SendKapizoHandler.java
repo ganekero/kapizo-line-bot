@@ -74,7 +74,7 @@ public class SendKapizoHandler {
     if (Objects.equals(originalMessageText, "こんばんは") && hour < 9 || hour > 17) {
       return new TextMessage("カピ子(蔵)だよ！\nこんばんは");
     }
-    return new TextMessage("また遊んでね！！");
+    return new TextMessage("また遊んでね！！!");
   }
 
   //    private void accessToDatabase() {
