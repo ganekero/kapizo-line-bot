@@ -105,7 +105,7 @@ public class SendKapizoHandler {
   //    }
 
   private Connection getConnection() {
-    String dbUrl = System.getenv("DATABASE_URL");
+    String dbUrl = System.getenv("JDBC_DATABASE_URL");
     log.info(dbUrl);
     try {
       return DriverManager.getConnection(dbUrl);
