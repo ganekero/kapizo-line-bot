@@ -59,19 +59,18 @@ public class SendKapizoHandler {
         String.format(
             "%s > from_time and %s < to_time and status = 't' and %s > from_weekday and %s < to_weekday",
             targetTime, targetTime, dayOfWeek, dayOfWeek);
-    log.info("SQL: " + format);
-    if (originalMessageText.contains("おは")) {
+        if (originalMessageText.contains("おは")) {
       whereSql = format;
     }
     if (originalMessageText.contains("起きてる")) {
       whereSql = format;
     }
-    Statement statement = null;
-    ResultSet resultSet = null;
+    Statement statement;
+    ResultSet resultSet;
     final String selectSql = "select reply_contents from reply_message where";
     final String sql = selectSql + whereSql + ";";
+      log.info("SQL: " + sql);
     final Connection conn = getConnection();
-    // ステートメントの作成
     try {
       statement = conn.createStatement();
       resultSet = statement.executeQuery(sql);
