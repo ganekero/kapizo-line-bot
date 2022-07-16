@@ -69,13 +69,14 @@ public class SendKapizoHandler {
     ResultSet resultSet;
     final String selectSql = "select reply_contents from reply_message where ";
     final String sql = selectSql + whereSql + ";";
-      log.info("SQL: " + sql);
+    log.info("SQL: " + sql);
     final Connection conn = getConnection();
     try {
       statement = conn.createStatement();
       resultSet = statement.executeQuery(sql);
-      String replyMsg = resultSet.getString("reply_contents");
-      if (replyMsg != null) {
+      if (resultSet.next()) {
+        String replyMsg = resultSet.getString("reply_contents");
+
         // close connection
         statement.close();
         resultSet.close();
