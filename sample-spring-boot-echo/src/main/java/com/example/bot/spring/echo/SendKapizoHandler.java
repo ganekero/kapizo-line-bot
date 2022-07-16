@@ -56,7 +56,7 @@ public class SendKapizoHandler {
     int targetTime = hour * 3600 + minutes * 60 + seconds;
     String whereTime =
         String.format(
-            "%s > from_time and %s < to_time and status = 't' and %s > from_weekday and %s < to_weekday",
+            "%s >= from_time and %s <= to_time and status = 't' and %s >= from_weekday and %s <= to_weekday",
             targetTime, targetTime, dayOfWeek, dayOfWeek);
     if (originalMessageText.contains("おは")) {
       whereSql = String.format("%s and keywords = 'おは'", whereTime);
