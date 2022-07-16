@@ -55,17 +55,16 @@ public class SendKapizoHandler {
     String whereSql = null;
     int dayOfWeek = jstOffsetDateTime.getDayOfWeek().getValue();
     int targetTime = hour * 3600;
+    String format =
+        String.format(
+            "%s > from_time and %s < to_time and status = t and %s > from_weekday and %s < to_weekday",
+            targetTime, targetTime, dayOfWeek, dayOfWeek);
+    log.info("SQL: " + format);
     if (originalMessageText.contains("おは")) {
-      whereSql =
-          String.format(
-              "%s > from_time and %s < to_time and status = t and %s > from_weekday and %s < to_weekday",
-              targetTime, targetTime, dayOfWeek, dayOfWeek);
+      whereSql = format;
     }
     if (originalMessageText.contains("起きてる")) {
-      whereSql =
-          String.format(
-              "%s > from_time and %s < to_time and status = t and %s > from_weekday and %s < to_weekday",
-              targetTime, targetTime, dayOfWeek, dayOfWeek);
+      whereSql = format;
     }
     Statement statement = null;
     ResultSet resultSet = null;
