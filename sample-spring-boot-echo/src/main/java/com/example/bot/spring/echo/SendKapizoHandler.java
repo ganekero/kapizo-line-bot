@@ -115,8 +115,9 @@ public class SendKapizoHandler {
     }
     String username = dbUri.getUserInfo().split(":")[0];
     String password = dbUri.getUserInfo().split(":")[1];
-    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
-    try {
+//    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+      String dbUrl = "jdbc:postgresql://ec2-54-227-248-71.compute-1.amazonaws.com:5432/d416bt68e3p6ii?password=41b99962bbbb3278fc6ccddfbe2f1ef7c0c6ab21224d19369535cc17e1da3817&sslmode=require&user=dvqlfcdcfxxlkm";
+      try {
       return DriverManager.getConnection(dbUrl, username, password);
     } catch (SQLException e) {
       throw new RuntimeException(e);
