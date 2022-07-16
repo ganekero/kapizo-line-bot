@@ -25,21 +25,11 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
+import java.time.*;
 
 @LineMessageHandler
 public class SendKapizoHandler {
@@ -52,23 +42,62 @@ public class SendKapizoHandler {
 
     // access to db
     //        accessToDatabase();
-    final Connection conn = getConnection();
     //     final String result= conn.createStatement("select * from message;");
     final String originalMessageText = event.getMessage().getText();
     final Instant timestamp = event.getTimestamp();
     final String message = messageFactory.makeMessage(originalMessageText, timestamp);
     final ZonedDateTime utcOffsetDateTime = timestamp.atZone(ZoneOffset.UTC);
-    ZonedDateTime jstOffsetDateTime = utcOffsetDateTime.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
+    ZonedDateTime jstOffsetDateTime =
+        utcOffsetDateTime.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
     final int hour = jstOffsetDateTime.getHour();
-      log.info("hour: " + hour);
+    log.info("hour: " + hour);
 
-    if ("おはよう".equals(originalMessageText) && hour >= 9 && hour <= 17) {
-      return new TextMessage("カピ子(蔵)だよ！\nおはよう\n");
+    String whereSql = null;
+    int dayOfWeek = jstOffsetDateTime.getDayOfWeek().getValue();
+    int targetTime = hour * 3600;
+    if (originalMessageText.contains("おは")) {
+      whereSql =
+          String.format(
+              "%s > from_time and %s < to_time and status = t and %s > from_weekday and %s < to_weekday",
+              targetTime, targetTime, dayOfWeek, dayOfWeek);
     }
-    if (Objects.equals(originalMessageText, "こんばんは") && hour < 9 || hour > 17) {
-      return new TextMessage("カピ子(蔵)だよ！\nこんばんは");
+    if (originalMessageText.contains("起きてる")) {
+      whereSql =
+          String.format(
+              "%s > from_time and %s < to_time and status = t and %s > from_weekday and %s < to_weekday",
+              targetTime, targetTime, dayOfWeek, dayOfWeek);
     }
-    return new TextMessage("また遊んでね！！!");
+    Statement statement = null;
+    ResultSet resultSet = null;
+    final String selectSql = "select reply_contents from reply_message where";
+    final String sql = selectSql + whereSql + ";";
+    final Connection conn = getConnection();
+    // ステートメントの作成
+    try {
+      statement = conn.createStatement();
+      resultSet = statement.executeQuery(sql);
+      String replyMsg = resultSet.getString("reply_contents");
+      if (replyMsg != null) {
+        // close connection
+        statement.close();
+        resultSet.close();
+        return new TextMessage(replyMsg);
+      } else {
+        return new TextMessage("また遊んでね！！!");
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+      log.error("なんか知らんけどばーか");
+      return new TextMessage("ごめんね。\n予期せぬエラーだからもう一回送ってね。\nそれでもダメだったら親に相談してね");
+    }
+
+    //    if ("おはよう".equals(originalMessageText) && hour >= 9 && hour <= 17) {
+    //      return new TextMessage("カピ子(蔵)だよ！\nおはよう\n");
+    //    }
+    //    if (Objects.equals(originalMessageText, "こんばんは") && hour < 9 || hour > 17) {
+    //      return new TextMessage("カピ子(蔵)だよ！\nこんばんは");
+    //    }
+
   }
 
   public static Connection getConnection() {
@@ -81,9 +110,11 @@ public class SendKapizoHandler {
     }
     String username = dbUri.getUserInfo().split(":")[0];
     String password = dbUri.getUserInfo().split(":")[1];
-//    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
-      String dbUrl = "jdbc:postgresql://ec2-54-227-248-71.compute-1.amazonaws.com:5432/d416bt68e3p6ii?password=41b99962bbbb3278fc6ccddfbe2f1ef7c0c6ab21224d19369535cc17e1da3817&sslmode=require&user=dvqlfcdcfxxlkm";
-      try {
+    //    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() +
+    // dbUri.getPath();
+    String dbUrl =
+        "jdbc:postgresql://ec2-54-227-248-71.compute-1.amazonaws.com:5432/d416bt68e3p6ii?password=41b99962bbbb3278fc6ccddfbe2f1ef7c0c6ab21224d19369535cc17e1da3817&sslmode=require&user=dvqlfcdcfxxlkm";
+    try {
       return DriverManager.getConnection(dbUrl, username, password);
     } catch (SQLException e) {
       throw new RuntimeException(e);
