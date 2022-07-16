@@ -44,12 +44,6 @@ public class SendKapizoHandler {
   private final Logger log = LoggerFactory.getLogger(SendKapizoHandler.class);
   private final MessageFactory messageFactory = new MessageFactory();
 
-  // db
-  //    String url =
-  // "jdbc:postgres://dvqlfcdcfxxlkm:41b99962bbbb3278fc6ccddfbe2f1ef7c0c6ab21224d19369535cc17e1da3817@ec2-54-227-248-71.compute-1.amazonaws.com:5432/d416bt68e3p6ii";
-  //    String user = "dvqlfcdcfxxlkm";
-  //    String password = "41b99962bbbb3278fc6ccddfbe2f1ef7c0c6ab21224d19369535cc17e1da3817";
-
   @EventMapping
   public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
     log.info("event: " + event);
@@ -58,16 +52,11 @@ public class SendKapizoHandler {
     //        accessToDatabase();
     final Connection conn = getConnection();
     //     final String result= conn.createStatement("select * from message;");
-
     final String originalMessageText = event.getMessage().getText();
-
     final Instant timestamp = event.getTimestamp();
-
-    //        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    //        final String dtStr = df.format(date);
-
     final String message = messageFactory.makeMessage(originalMessageText, timestamp);
     final int hour = timestamp.atZone(ZoneOffset.UTC).getHour();
+      log.info("hour: " + hour);
 
     if ("おはよう".equals(originalMessageText) && hour >= 9 && hour <= 17) {
       return new TextMessage("カピ子(蔵)だよ！\nおはよう\n");
@@ -77,33 +66,6 @@ public class SendKapizoHandler {
     }
     return new TextMessage("また遊んでね！！!");
   }
-
-  //    private void accessToDatabase() {
-  //        Connection conn = null;
-  //        Statement stmt = null;
-  //        ResultSet rset = null;
-  //
-  //        //PostgreSQLへ接続
-  //        try {
-  //            conn = DriverManager.getConnection(url, user, password);
-  //
-  //            //SELECT文の実行
-  //            stmt = conn.createStatement();
-  //            String sql = "SELECT 1";
-  //            rset = stmt.executeQuery(sql);
-  //
-  //            //SELECT結果の受け取り
-  //            while(rset.next()){
-  //                String col = rset.getString(1);
-  //                System.out.println(col);
-  //            }
-  //
-  //        } catch (SQLException e) {
-  //            e.printStackTrace();
-  //        }
-  //
-  //
-  //    }
 
   public static Connection getConnection() {
     // jdbc:postgresql://<host>:<port>/<dbname>?user=<username>&password=<password>
