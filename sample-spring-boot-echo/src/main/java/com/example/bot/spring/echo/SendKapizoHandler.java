@@ -34,7 +34,9 @@ import java.net.URISyntaxException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -55,7 +57,9 @@ public class SendKapizoHandler {
     final String originalMessageText = event.getMessage().getText();
     final Instant timestamp = event.getTimestamp();
     final String message = messageFactory.makeMessage(originalMessageText, timestamp);
-    final int hour = timestamp.atZone(ZoneOffset.UTC).getHour();
+    final ZonedDateTime utcOffsetDateTime = timestamp.atZone(ZoneOffset.UTC);
+    ZonedDateTime jstOffsetDateTime = utcOffsetDateTime.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
+    final int hour = jstOffsetDateTime.getHour();
       log.info("hour: " + hour);
 
     if ("おはよう".equals(originalMessageText) && hour >= 9 && hour <= 17) {
