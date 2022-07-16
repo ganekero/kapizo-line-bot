@@ -47,11 +47,13 @@ public class SendKapizoHandler {
     ZonedDateTime jstOffsetDateTime =
         utcOffsetDateTime.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
     final int hour = jstOffsetDateTime.getHour();
-    log.info("hour: " + hour);
+    final int minutes = jstOffsetDateTime.getMinute();
+    final int seconds = jstOffsetDateTime.getSecond();
+    log.info("hour: " + hour + "minutes: " + minutes + "seconds: " + seconds);
 
     String whereSql = null;
     int dayOfWeek = jstOffsetDateTime.getDayOfWeek().getValue();
-    int targetTime = hour * 3600;
+    int targetTime = hour * 3600 + minutes * 60 + seconds;
     String whereTime =
         String.format(
             "%s > from_time and %s < to_time and status = 't' and %s > from_weekday and %s < to_weekday",
