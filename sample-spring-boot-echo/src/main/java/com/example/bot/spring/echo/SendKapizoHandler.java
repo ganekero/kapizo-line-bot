@@ -40,9 +40,6 @@ public class SendKapizoHandler {
   public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
     log.info("event: " + event);
 
-    // access to db
-    //        accessToDatabase();
-    //     final String result= conn.createStatement("select * from message;");
     final String originalMessageText = event.getMessage().getText();
     final Instant timestamp = event.getTimestamp();
     final String message = messageFactory.makeMessage(originalMessageText, timestamp);
@@ -55,15 +52,18 @@ public class SendKapizoHandler {
     String whereSql = null;
     int dayOfWeek = jstOffsetDateTime.getDayOfWeek().getValue();
     int targetTime = hour * 3600;
-    String format =
+    String whereTime =
         String.format(
             "%s > from_time and %s < to_time and status = 't' and %s > from_weekday and %s < to_weekday",
             targetTime, targetTime, dayOfWeek, dayOfWeek);
     if (originalMessageText.contains("おは")) {
-      whereSql = format;
+      whereSql = String.format("%s and keywords = 'おは'", whereTime);
     }
     if (originalMessageText.contains("起きてる")) {
-      whereSql = format;
+      whereSql = String.format("%s and keywords = '起きてる'", whereTime);
+    }
+    if (originalMessageText.contains("こんばんは")) {
+      whereSql = String.format("%s and keywords = 'こんばんは'", whereTime);
     }
     Statement statement;
     ResultSet resultSet;
@@ -89,14 +89,6 @@ public class SendKapizoHandler {
       log.error("なんか知らんけどばーか");
       return new TextMessage("ごめんね。\n予期せぬエラーだからもう一回送ってね。\nそれでもダメだったら親に相談してね");
     }
-
-    //    if ("おはよう".equals(originalMessageText) && hour >= 9 && hour <= 17) {
-    //      return new TextMessage("カピ子(蔵)だよ！\nおはよう\n");
-    //    }
-    //    if (Objects.equals(originalMessageText, "こんばんは") && hour < 9 || hour > 17) {
-    //      return new TextMessage("カピ子(蔵)だよ！\nこんばんは");
-    //    }
-
   }
 
   public static Connection getConnection() {
