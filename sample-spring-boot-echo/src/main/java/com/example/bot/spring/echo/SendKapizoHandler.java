@@ -57,7 +57,7 @@ public class SendKapizoHandler {
     int targetTime = hour * 3600;
     String format =
         String.format(
-            "%s > from_time and %s < to_time and status = t and %s > from_weekday and %s < to_weekday",
+            "%s > from_time and %s < to_time and status = 't' and %s > from_weekday and %s < to_weekday",
             targetTime, targetTime, dayOfWeek, dayOfWeek);
     log.info("SQL: " + format);
     if (originalMessageText.contains("おは")) {
