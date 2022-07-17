@@ -21,6 +21,7 @@ import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.model.message.flex.component.Text;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import org.slf4j.Logger;
@@ -86,8 +87,11 @@ public class SendKapizoHandler {
         // close connection
         statement.close();
         resultSet.close();
-//        return new TextMessage(replyMsg + "{Nickname}");
-        return new TextMessage("aaa" + "{Nickname}");
+        //        return new TextMessage(replyMsg + "{Nickname}");
+        TextMessage a = new TextMessage("aaa {Nickname}");
+        String b = a.getText();
+        log.info(b);
+        return a;
       } else {
         return new TextMessage("また遊んでね！！!");
       }
