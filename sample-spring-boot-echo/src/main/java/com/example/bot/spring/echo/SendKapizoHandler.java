@@ -67,8 +67,8 @@ public class SendKapizoHandler {
     if (originalMessageText.contains("こんばんは")) {
       whereSql = String.format("%s and keywords = 'こんばんは'", whereTime);
     }
-    if (originalMessageText.contains("こんにちは")) {
-      whereSql = String.format("%s and keywords = 'こんにちは'", whereTime);
+    if (originalMessageText.contains("こんにち")) {
+      whereSql = String.format("%s and keywords = 'こんにち'", whereTime);
     }
     Statement statement;
     ResultSet resultSet;
