@@ -81,6 +81,7 @@ public class SendKapizoHandler {
       resultSet = statement.executeQuery(sql);
       if (resultSet.next()) {
         String replyMsg = resultSet.getString("reply_contents");
+        log.info("replyMsg: " + replyMsg);
 
         // close connection
         statement.close();
