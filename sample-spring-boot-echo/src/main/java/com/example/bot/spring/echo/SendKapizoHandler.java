@@ -86,7 +86,8 @@ public class SendKapizoHandler {
         // close connection
         statement.close();
         resultSet.close();
-        return new TextMessage(replyMsg + "{Nickname}");
+//        return new TextMessage(replyMsg + "{Nickname}");
+        return new TextMessage("aaa" + "{Nickname}");
       } else {
         return new TextMessage("また遊んでね！！!");
       }
